@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "timestamp": "2026-07-08T20:52:51Z",
-    "runner_os": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
-    "cpu_model": "arm",
-    "nproc": 8,
-    "commit": "unknown"
+    "timestamp": "2026-07-08T20:59:40Z",
+    "runner_os": "Linux-6.17.0-1018-azure-x86_64-with-glibc2.39",
+    "cpu_model": "AMD EPYC 7763 64-Core Processor",
+    "nproc": 4,
+    "commit": "d3d64ad463c51bd003fd5d9e4060021de04bc665"
   },
   "metrics": {
     "sysbench_cpu_events_per_sec": {
-      "value": 53878215.74,
+      "value": 3127.97,
       "unit": "events/s",
       "higher_is_better": true
     }
