@@ -1,0 +1,16 @@
+{
+  "metadata": {
+    "timestamp": "2026-07-08T20:52:51Z",
+    "runner_os": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "cpu_model": "arm",
+    "nproc": 8,
+    "commit": "unknown"
+  },
+  "metrics": {
+    "sysbench_cpu_events_per_sec": {
+      "value": 53878215.74,
+      "unit": "events/s",
+      "higher_is_better": true
+    }
+  }
+}

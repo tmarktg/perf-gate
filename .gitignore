@@ -1,0 +1,4 @@
+raw/*.txt
+results.json
+__pycache__/
+*.pyc
