@@ -1,0 +1,52 @@
+name: regenerate-baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regenerate-baseline:
+    # Same runner class as perf-gate.yml -- a baseline is only valid for the
+    # hardware it was captured on (§6, §9).
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install benchmark tools
+        run: sudo apt-get update && sudo apt-get install -y sysbench stress-ng fio
+
+      - name: Run benchmarks
+        run: ./run_bench.sh
+
+      - name: Parse results into proposed baseline
+        run: python parse.py raw/ -o /tmp/proposed_baseline.json
+
+      - name: Diff proposed baseline against the committed one
+        run: |
+          {
+            echo "Proposed new baseline, captured on this run's ubuntu-24.04 runner."
+            echo ""
+            python compare.py /tmp/proposed_baseline.json baseline.json --tolerance 0.15 \
+              --advisory-metrics fio_randread_iops,fio_randread_bw_kibps || true
+          } > /tmp/baseline_diff.md
+          cat /tmp/baseline_diff.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stage new baseline
+        run: cp /tmp/proposed_baseline.json baseline.json
+
+      - name: Open PR with the proposed baseline
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Regenerate baseline via workflow_dispatch"
+          title: "Regenerate baseline (manual)"
+          body-path: /tmp/baseline_diff.md
+          branch: regenerate-baseline
+          delete-branch: true
+          add-paths: baseline.json
