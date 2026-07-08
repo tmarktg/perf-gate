@@ -14,15 +14,69 @@ def parse_sysbench_cpu(text: str) -> dict:
     if not m:
         raise ValueError("could not find 'events per second' in sysbench cpu output")
     return {
-        "value": float(m.group(1)),
-        "unit": "events/s",
-        "higher_is_better": True,
+        "sysbench_cpu_events_per_sec": {
+            "value": float(m.group(1)),
+            "unit": "events/s",
+            "higher_is_better": True,
+        }
     }
 
 
-# raw filename -> (metric name, parser function)
+def parse_sysbench_memory(text: str) -> dict:
+    m = re.search(r"MiB transferred \(([\d.]+) MiB/sec\)", text)
+    if not m:
+        raise ValueError("could not find 'MiB/sec' in sysbench memory output")
+    return {
+        "sysbench_memory_mib_per_sec": {
+            "value": float(m.group(1)),
+            "unit": "MiB/s",
+            "higher_is_better": True,
+        }
+    }
+
+
+def parse_stress_ng_cpu(text: str) -> dict:
+    # stress-ng: metrc: [pid] cpu  <bogo-ops> <real-s> <usr-s> <sys-s> <bogo-ops/s real> <bogo-ops/s usr+sys>
+    m = re.search(
+        r"metrc:.*\bcpu\s+\d+\s+[\d.]+\s+[\d.]+\s+[\d.]+\s+([\d.]+)\s+[\d.]+",
+        text,
+    )
+    if not m:
+        raise ValueError("could not find cpu metrics row in stress-ng output")
+    return {
+        "stressng_cpu_bogo_ops_per_sec": {
+            "value": float(m.group(1)),
+            "unit": "bogo-ops/s",
+            "higher_is_better": True,
+        }
+    }
+
+
+def parse_fio_randread(text: str) -> dict:
+    # fio is run with --output-format=json for reliable parsing (its plain-text
+    # summary uses unit-suffixed, hard-to-parse shorthand like "39.2k").
+    data = json.loads(text)
+    read = data["jobs"][0]["read"]
+    return {
+        "fio_randread_iops": {
+            "value": read["iops"],
+            "unit": "IOPS",
+            "higher_is_better": True,
+        },
+        "fio_randread_bw_kibps": {
+            "value": read["bw"],
+            "unit": "KiB/s",
+            "higher_is_better": True,
+        },
+    }
+
+
+# raw filename -> parser function (returns one or more metric entries)
 PARSERS = {
-    "sysbench_cpu.txt": ("sysbench_cpu_events_per_sec", parse_sysbench_cpu),
+    "sysbench_cpu.txt": parse_sysbench_cpu,
+    "sysbench_memory.txt": parse_sysbench_memory,
+    "stress_ng_cpu.txt": parse_stress_ng_cpu,
+    "fio_randread.txt": parse_fio_randread,
 }
 
 
@@ -68,11 +122,11 @@ def main():
     args = ap.parse_args()
 
     metrics = {}
-    for filename, (metric_name, parser) in PARSERS.items():
+    for filename, parser in PARSERS.items():
         raw_file = args.raw_dir / filename
         if not raw_file.exists():
             continue
-        metrics[metric_name] = parser(raw_file.read_text())
+        metrics.update(parser(raw_file.read_text()))
 
     if not metrics:
         raise SystemExit(f"no known raw benchmark files found in {args.raw_dir}")
