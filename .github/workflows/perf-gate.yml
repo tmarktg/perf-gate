@@ -1,0 +1,35 @@
+name: perf-gate
+
+on:
+  pull_request:
+
+jobs:
+  perf-gate:
+    # Pinned, not ubuntu-latest: baselines are only valid for the runner
+    # class they were captured on (see DESIGN §6, §8).
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install benchmark tools
+        run: sudo apt-get update && sudo apt-get install -y sysbench
+
+      - name: Run benchmarks
+        run: ./run_bench.sh
+
+      - name: Parse results
+        run: python parse.py raw/ -o results.json
+
+      - name: Compare against baseline
+        run: python compare.py results.json baseline.json --tolerance 0.15 >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-gate-results
+          path: results.json
