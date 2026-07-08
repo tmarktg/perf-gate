@@ -1,34 +1,34 @@
 {
   "metadata": {
-    "timestamp": "2026-07-08T21:11:36Z",
+    "timestamp": "2026-07-08T21:33:40Z",
     "runner_os": "Linux-6.17.0-1018-azure-x86_64-with-glibc2.39",
     "cpu_model": "AMD EPYC 7763 64-Core Processor",
     "nproc": 4,
-    "commit": "0db700b389d006755b5026ce3db649fca7c615fc"
+    "commit": "6b988e141b9a120ce4ccde5e6261dc021000862e"
   },
   "metrics": {
     "sysbench_cpu_events_per_sec": {
-      "value": 3146.41,
+      "value": 3120.13,
       "unit": "events/s",
       "higher_is_better": true
     },
     "sysbench_memory_mib_per_sec": {
-      "value": 5991.03,
+      "value": 5983.9,
       "unit": "MiB/s",
       "higher_is_better": true
     },
     "stressng_cpu_bogo_ops_per_sec": {
-      "value": 2001.18,
+      "value": 2037.7,
       "unit": "bogo-ops/s",
       "higher_is_better": true
     },
     "fio_randread_iops": {
-      "value": 6932.706729,
+      "value": 6733.226677,
       "unit": "IOPS",
       "higher_is_better": true
     },
     "fio_randread_bw_kibps": {
-      "value": 27730,
+      "value": 26932,
       "unit": "KiB/s",
       "higher_is_better": true
     }
