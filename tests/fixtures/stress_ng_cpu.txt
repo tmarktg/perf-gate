@@ -1,0 +1,11 @@
+stress-ng: info:  [71110] setting to a 5 secs run per stressor
+stress-ng: info:  [71110] dispatching hogs: 8 cpu
+stress-ng: info:  [71110] note: system has only 82 MB of free memory and swap, recommend using --oom-avoid
+stress-ng: metrc: [71110] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [71110]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [71110] cpu               72878      5.00     36.36      0.16     14572.79        1995.81
+stress-ng: info:  [71110] skipped: 0
+stress-ng: info:  [71110] passed: 8: cpu (8)
+stress-ng: info:  [71110] failed: 0
+stress-ng: info:  [71110] metrics untrustworthy: 0
+stress-ng: info:  [71110] successful run completed in 5.00 secs
