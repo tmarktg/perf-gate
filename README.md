@@ -4,6 +4,8 @@
 
 A CI job that runs standard Linux benchmarks (`sysbench`, `stress-ng`, `fio`), turns their output into structured numbers, and **fails the build when performance regresses beyond a tolerance** — while tolerating the run-to-run noise inherent to shared CI runners.
 
+See [CASE_STUDY.md](CASE_STUDY.md) for the build narrative — what broke along the way and what it taught me — or [DESIGN.md](DESIGN.md) for the full design doc.
+
 ## The problem
 
 Running a benchmark is easy. Running it *in CI* and deciding "is this a real regression or just noise?" is the hard part, because CI runners are shared, virtualized, and noisy — the same commit can vary 10–30% run-to-run on CPU-bound work with nothing changed. A naive absolute threshold (`fail if score < 5000`) flags false regressions constantly and gets muted or ignored — the classic failure mode of perf gates.
